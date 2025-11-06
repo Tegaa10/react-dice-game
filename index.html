@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+    <!-- StAuth10244: I, Tega Onororemu, 000795872 certify that this material is 
+    my original work. No other person's work has been used without due 
+    acknowledgement. I have not made my work available to anyone else -->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Dice Roller</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        .App {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #0b3b71;
+        }
+
+        .dice-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .dice {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ddd;
+            border: 2px solid #333;
+            margin: 0 5px;
+            font-size: 24px;
+            border-radius: 10%;
+            cursor: pointer;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+        }
+
+        .controls label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .controls span {
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .controls button {
+            padding: 5px 10px;
+            background-color: #4a7334;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .controls button:disabled {
+            background-color: #ddd;
+        }
+
+        #rollBtn {
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            background-color: #0b3b71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- React and ReactDOM CDN -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        // Dice component: receives number as a prop
+        function Dice({ value, onClick }) {
+            return (
+                <div className="dice" onClick={onClick}>
+                    {value}
+                </div>
+            );
+        }
+
+        // Main App component
+        function App() {
+            const [numDice, setNumDice] = React.useState(1);
+            const [numSides, setNumSides] = React.useState(6);
+            const [diceValues, setDiceValues] = React.useState([1]);
+
+            // Increment the number of dice
+            const addDice = () => {
+                setNumDice(prev => prev + 1);
+                setDiceValues([...diceValues, 1]); // Add new dice with value 1
+            };
+
+            // Reset the dice
+            const resetDice = () => {
+                setNumDice(1);
+                setNumSides(6);
+                setDiceValues([1]);
+            };
+
+            // Change the number of sides
+            const incrementSides = () => {
+                if (numSides < 20) {
+                    setNumSides(prev => prev + 1);
+                }
+            };
+
+            const decrementSides = () => {
+                if (numSides > 1) {
+                    setNumSides(prev => prev - 1);
+                }
+            };
+
+            // Increment dice value or reset if it exceeds the number of sides
+            const incrementDiceValue = index => {
+                setDiceValues(diceValues.map((val, i) => (
+                    i === index ? (val % numSides) + 1 : val
+                )));
+            };
+
+            // Roll the dice - generate random values
+            const rollDice = () => {
+                setDiceValues(diceValues.map(() => (
+                    Math.floor(Math.random() * numSides) + 1
+                )));
+            };
+
+            return (
+                <div className="App">
+                    <h1>Virtual Dice Roller</h1>
+
+                    <div className="dice-container">
+                        {diceValues.map((value, index) => (
+                            <Dice 
+                                key={index}
+                                value={value} 
+                                onClick={() => incrementDiceValue(index)}
+                            />
+                        ))}
+                    </div>
+
+                    <div className="controls">
+                        <label>
+                            Number of Dice: <span>{numDice}</span>
+                        </label>
+                        <button onClick={addDice}>Add Dice</button>
+                        <button onClick={resetDice}>Reset</button>
+                    </div>
+
+                    <div className="controls">
+                        <label>
+                            Number of Sides: <span>{numSides}</span>
+                        </label>
+                        <button onClick={incrementSides} disabled={numSides >= 20}>Up</button>
+                        <button onClick={decrementSides} disabled={numSides <= 1}>Down</button>
+                    </div>
+
+                    <button id="rollBtn" onClick={rollDice}>Roll Dice</button>
+
+                    <footer>
+                        Oghenetega Onororemu - Student ID: 000795872
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
